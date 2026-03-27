@@ -9,7 +9,53 @@
 *.user
 *.userosscache
 *.sln.docstates
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
 
+# Build output
+[Bb]in/
+[Oo]bj/
+out/
+Debug/
+Release/
+
+# App settings
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Test / coverage
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.*
+!.env.example
 ############################
 # Build folders
 ############################
