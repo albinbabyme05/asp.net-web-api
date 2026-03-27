@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StudentApi.Data;
+using StudentApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IStudentService, StudentService>();
 
 // add DB service
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -19,22 +21,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-var students = new List<Studnet>
-{
-    new Studnet{Id=1, Name="Albin"},
-    new Studnet{Id=2, Name="Aline"},
-    new Studnet{Id=3, Name="Anju"},
-};
-
-
-app.MapGet("/student", () => students);
-
-app.MapGet("/student/{id}", (int id) =>
-    {
-        var student = students.Find(student => student.Id == id);
-        return student;
-    }
-);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -50,9 +36,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-class Studnet
-{
-    public int Id { get; set; }
-    public string? Name { get; set; }
-}
