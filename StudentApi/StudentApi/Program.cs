@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StudentApi.Data;
 using StudentApi.Services;
+using StudentApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//add middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
