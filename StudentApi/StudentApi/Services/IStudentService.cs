@@ -5,7 +5,7 @@ namespace StudentApi.Services
 {
     public interface IStudentService
     {
-        Task<IEnumerable<StudentDto>> GetAllStudents();
+        Task<IEnumerable<StudentDto>> GetAllStudents(int pageNumber, int pageSize);
         Task<StudentDto> CreateStudent(CreateStudentDto createStudent);
         Task<StudentDto> GetStudentById(int id);
         Task<bool> UpdateStudent(int id, UpdateStudentDto updateStudent);

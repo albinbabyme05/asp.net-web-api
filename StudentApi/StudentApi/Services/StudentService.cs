@@ -21,12 +21,12 @@ namespace StudentApi.Services
         }
 
         //get  all student
-        public async Task<IEnumerable<StudentDto>> GetAllStudents()
+        public async Task<IEnumerable<StudentDto>> GetAllStudents(int pageNumber, int pageSize)
         {
-            _iLogger.LogInformation("Fetching all students from database.");
+            _iLogger.LogInformation("===> Fetching students. Page number: {PageNumber}, Page Size: {PageSize}. <===", pageNumber, pageSize);
                                                   
             //1.fetch all student data from DB
-            var student = await _dbContext.StudentsDB.ToListAsync();
+            var student = await _dbContext.StudentsDB.Skip((pageNumber - 1)* pageSize).Take(pageSize).ToListAsync();
 
             //2.send only required data to user
             var result = student.Select(s => new StudentDto
@@ -39,7 +39,7 @@ namespace StudentApi.Services
                 Department = s.Department,
             }).ToList();
 
-            _iLogger.LogInformation($"Fetched {result.Count} students successfully.");
+            _iLogger.LogInformation("===> Fetched {Count} students successfully. <===", result.Count);
 
             //3.return data with status code
             return result;
@@ -48,13 +48,13 @@ namespace StudentApi.Services
         // get student by id
         public async Task<StudentDto> GetStudentById(int id)
         {
-            _iLogger.LogInformation("Fetching student with id {StudentId}.", id);
+            _iLogger.LogInformation("===> Fetching student with id {StudentId}. <===", id);
 
             var student = await _dbContext.StudentsDB.FindAsync(id);
 
             if (student == null)
             {
-                _iLogger.LogInformation("Student with id {StudentId} was not found.", id);
+                _iLogger.LogInformation("===> Student with id {StudentId} was not found. <===", id);
                 return null;
             }
                 
@@ -68,7 +68,7 @@ namespace StudentApi.Services
                 Department = student.Department,
             };
 
-            _iLogger.LogInformation("Fetched student with id {StudentId}.", id);
+            _iLogger.LogInformation("===> Fetched student with id {StudentId}. <===", id);
             return result;
         }
 
@@ -76,7 +76,7 @@ namespace StudentApi.Services
         //Add a sudent
         public async Task<StudentDto> CreateStudent(CreateStudentDto createStudent)
         {
-            _iLogger.LogInformation("Creating a new student with email {Email}.", createStudent.Email);
+            _iLogger.LogInformation("===> Creating a new student with email {Email}. <===", createStudent.Email);
 
             // create a student object to add to List or database
             var newStudent = new Student
@@ -102,7 +102,7 @@ namespace StudentApi.Services
                 Department = newStudent.Department,
             };
 
-            _iLogger.LogInformation("Created a new student with email {Email}.", createStudent.Email);
+            _iLogger.LogInformation("===> Created a new student with email {Email}. <===", createStudent.Email);
 
             return responseDto;
         }
@@ -110,13 +110,13 @@ namespace StudentApi.Services
         // update the studnet
         public async Task<bool> UpdateStudent(int id, UpdateStudentDto updateStudent)
         {
-            _iLogger.LogInformation("Updating student with id {StudentId}.", id);
+            _iLogger.LogInformation("===> Updating student with id {StudentId}. <===", id);
 
             var student = await _dbContext.StudentsDB.FindAsync(id);
 
             if (student == null)
             {
-                _iLogger.LogWarning("Update failed. Student with id {StudentId} was not found.", id);
+                _iLogger.LogWarning("===> Update failed. Student with id {StudentId} was not found. <===", id);
                 return false;
             }
 
@@ -133,7 +133,7 @@ namespace StudentApi.Services
 
             await _dbContext.SaveChangesAsync();
 
-            _iLogger.LogInformation("Student with id {StudentId} updated successfully.", id);
+            _iLogger.LogInformation("===> Student with id {StudentId} updated successfully. <===", id);
 
             return true;
 
@@ -142,12 +142,12 @@ namespace StudentApi.Services
         //delete a student by Id
         public async Task<bool> DeleteStudent(int id)
         {
-            _iLogger.LogInformation("Deleting student with id {StudentId}.", id);
+            _iLogger.LogInformation("===> Deleting student with id {StudentId}. <===", id);
 
             var student = await _dbContext.StudentsDB.FindAsync(id);
             if (student == null)
             {
-                _iLogger.LogWarning("Delete failed. Student with id {StudentId} was not found.", id);
+                _iLogger.LogWarning("===> Delete failed. Student with id {StudentId} was not found. <===", id);
                 return false;
             }
 
@@ -155,7 +155,7 @@ namespace StudentApi.Services
 
             await _dbContext.SaveChangesAsync();
 
-            _iLogger.LogInformation("Student with id {StudentId} deleted successfully.", id);
+            _iLogger.LogInformation("===> Student with id {StudentId} deleted successfully. <===", id);
 
             return true;
         }

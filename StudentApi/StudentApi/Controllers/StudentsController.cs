@@ -21,10 +21,21 @@ namespace StudentApi.Controllers
 
         //get  all student
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentDto>>> GetAllStudent()
+        public async Task<ActionResult<IEnumerable<StudentDto>>> GetAllStudent([FromQuery] int pageNumber=1, [FromQuery] int pageSize=5)
         {
+            // controll service pagnation and safety
+            if(pageNumber<= 0 || pageSize <= 0)
+            {
+                return BadRequest("Page number and Page size must be greater than 0.");
+            }
+
+            if (pageSize > 50)
+            {
+                pageNumber = 50;
+            }
+
             //1.fetch all student data from DB with servicr class
-            var students = await _iStudentService.GetAllStudents();
+            var students = await _iStudentService.GetAllStudents(pageNumber, pageSize);
             return Ok(students);
         }
 
