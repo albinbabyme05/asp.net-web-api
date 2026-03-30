@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using StudentApi.Data;
 using StudentApi.Dtos;
@@ -21,20 +22,41 @@ namespace StudentApi.Services
         }
 
         //get  all student
-        public async Task<IEnumerable<StudentDto>> GetAllStudents(int pageNumber, int pageSize, string? name, string? department)
+        public async Task<IEnumerable<StudentDto>> GetAllStudents(
+            int pageNumber,
+            int pageSize,
+            string? name,
+            string? department,
+            string? sortBy,
+            string? sortOrder)
         {
-            _iLogger.LogInformation("===> Fetching students with filters. <===");
+            _iLogger.LogInformation("===> Fetching students with filters, sorting and pagination. <===");
 
             var query = _dbContext.StudentsDB.AsQueryable();
 
             //filtering
             if (!string.IsNullOrEmpty(name))
             {
-                query = query.Where(s => s.Name.Contains(name));
+                query = query.Where(s => s.Name.ToLower().Contains(name.ToLower()));
             }
             if (!string.IsNullOrEmpty(department))
             {
-                query = query.Where(s => s.Department.Contains(department));
+                query = query.Where(s => s.Department.ToLower().Contains(department.ToLower()));
+            }
+
+            switch(sortBy?.ToLower())
+            {
+                case "name":
+                    // condition ? value_if_true : value_if_false
+                    query = sortOrder?.ToLower() == "desc" ? query.OrderByDescending(s => s.Name) : query.OrderBy(s => s.Name);
+                    break;
+                case "age":
+                    query = sortOrder?.ToLower() == "desc" ? query.OrderByDescending(a => a.Age) : query.OrderBy(a => a.Age);
+                    break;
+                case "id":
+                default:
+                    query = sortOrder?.ToLower() == "desc" ? query.OrderByDescending(s => s.Id) : query.OrderBy(s => s.Id);
+                    break;
             }
 
             _iLogger.LogInformation("===> Fetching students. Page number: {PageNumber}, Page Size: {PageSize}. <===", pageNumber, pageSize);

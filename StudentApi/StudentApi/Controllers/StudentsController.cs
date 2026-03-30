@@ -25,7 +25,10 @@ namespace StudentApi.Controllers
             [FromQuery] int pageNumber=1,
             [FromQuery] int pageSize=5,
             [FromQuery] string? name=null,
-            [FromQuery] string? department=null)
+            [FromQuery] string? department=null,
+            [FromQuery] string? sortBy="id",
+            [FromQuery] string? sortOrder="asc"
+            )
         {
             // controll service pagnation and safety
             if(pageNumber<= 0 || pageSize <= 0)
@@ -39,7 +42,7 @@ namespace StudentApi.Controllers
             }
 
             //1.fetch all student data from DB with servicr class
-            var students = await _iStudentService.GetAllStudents(pageNumber, pageSize,name, department);
+            var students = await _iStudentService.GetAllStudents(pageNumber, pageSize,name, department, sortBy, sortOrder);
             return Ok(students);
         }
 
