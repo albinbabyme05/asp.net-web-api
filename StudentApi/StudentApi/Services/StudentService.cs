@@ -21,12 +21,26 @@ namespace StudentApi.Services
         }
 
         //get  all student
-        public async Task<IEnumerable<StudentDto>> GetAllStudents(int pageNumber, int pageSize)
+        public async Task<IEnumerable<StudentDto>> GetAllStudents(int pageNumber, int pageSize, string? name, string? department)
         {
+            _iLogger.LogInformation("===> Fetching students with filters. <===");
+
+            var query = _dbContext.StudentsDB.AsQueryable();
+
+            //filtering
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(s => s.Name.Contains(name));
+            }
+            if (!string.IsNullOrEmpty(department))
+            {
+                query = query.Where(s => s.Department.Contains(department));
+            }
+
             _iLogger.LogInformation("===> Fetching students. Page number: {PageNumber}, Page Size: {PageSize}. <===", pageNumber, pageSize);
                                                   
             //1.fetch all student data from DB
-            var student = await _dbContext.StudentsDB.Skip((pageNumber - 1)* pageSize).Take(pageSize).ToListAsync();
+            var student = await query.Skip((pageNumber - 1)* pageSize).Take(pageSize).ToListAsync();
 
             //2.send only required data to user
             var result = student.Select(s => new StudentDto
