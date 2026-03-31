@@ -5,7 +5,7 @@ namespace StudentApi.Services
 {
     public interface IStudentService
     {
-        Task<IEnumerable<StudentDto>> GetAllStudents(
+        Task<PagedResultDto<StudentDto>> GetAllStudents(
             int pageNumber,
             int pageSize,
             string? name,

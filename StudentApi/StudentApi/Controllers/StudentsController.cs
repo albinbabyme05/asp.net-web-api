@@ -21,7 +21,7 @@ namespace StudentApi.Controllers
 
         //get  all student
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentDto>>> GetAllStudent(
+        public async Task<ActionResult<PagedResultDto<StudentDto>>> GetAllStudent(
             [FromQuery] int pageNumber=1,
             [FromQuery] int pageSize=5,
             [FromQuery] string? name=null,

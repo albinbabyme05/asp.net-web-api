@@ -22,7 +22,7 @@ namespace StudentApi.Services
         }
 
         //get  all student
-        public async Task<IEnumerable<StudentDto>> GetAllStudents(
+        public async Task<PagedResultDto<StudentDto>> GetAllStudents(
             int pageNumber,
             int pageSize,
             string? name,
@@ -60,7 +60,11 @@ namespace StudentApi.Services
             }
 
             _iLogger.LogInformation("===> Fetching students. Page number: {PageNumber}, Page Size: {PageSize}. <===", pageNumber, pageSize);
-                                                  
+
+
+            // Total Page count before pageiantion
+            var totalCount = await query.CountAsync();
+
             //1.fetch all student data from DB
             var student = await query.Skip((pageNumber - 1)* pageSize).Take(pageSize).ToListAsync();
 
@@ -76,9 +80,18 @@ namespace StudentApi.Services
             }).ToList();
 
             _iLogger.LogInformation("===> Fetched {Count} students successfully. <===", result.Count);
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
             //3.return data with status code
-            return result;
+            return new PagedResultDto<StudentDto>
+            {
+                Items = result,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalCount = totalCount,
+                TotalPages = totalPages
+            };
+
         }
 
         // get student by id
